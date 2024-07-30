@@ -47,12 +47,11 @@ app.post('/lessons', upload.single('audioFile'), async (req, res) => {
     file: fs.createReadStream(audioFile.path),
     model: "whisper-1",
   });
-
-  console.log(transcription);
   
   const lesson = await prisma.lesson.create({
-    data: { title },
+    data: { title , transcription: transcription.text },
   })
+
   res.json(lesson)
 });
 

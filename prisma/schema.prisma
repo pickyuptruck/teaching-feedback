@@ -12,4 +12,5 @@ model Lesson {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   title       String    @default("New lesson")
+  transcription String?
 }
