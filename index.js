@@ -29,10 +29,11 @@ app.get('/lessons/:id', async (req, res) => {
 
 app.post('/lessons', upload.single('audioFile'), async (req, res) => {
   const { title } = req.body
-  
+
   const audioFile = req.file
 
   console.log(audioFile)
+  
   
   const lesson = await prisma.lesson.create({
     data: { title },
