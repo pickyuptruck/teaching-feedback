@@ -2,11 +2,22 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client'
 import OpenAI from 'openai';
 import multer from 'multer';
+import fs from 'fs';
 
-const upload = multer({ dest: "uploads/" });
+// multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const app = express();
 const prisma = new PrismaClient()
+
 
 app.use(express.json());
 
@@ -28,12 +39,16 @@ app.get('/lessons/:id', async (req, res) => {
 });
 
 app.post('/lessons', upload.single('audioFile'), async (req, res) => {
-  const { title } = req.body
 
+  const { title } = req.body
   const audioFile = req.file
 
-  console.log(audioFile)
-  
+  const transcription = await openai.audio.transcriptions.create({
+    file: fs.createReadStream(audioFile.path),
+    model: "whisper-1",
+  });
+
+  console.log(transcription);
   
   const lesson = await prisma.lesson.create({
     data: { title },
