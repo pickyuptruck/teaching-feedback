@@ -1,12 +1,16 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client'
 
+const OpenAI = require('openai');
+
 const app = express();
 const prisma = new PrismaClient()
 
 app.use(express.json());
 
 const port=8000;
+
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 app.get('/lessons', async (req, res) => {
   const lessons = await prisma.lesson.findMany()
@@ -23,6 +27,7 @@ app.get('/lessons/:id', async (req, res) => {
 
 app.post('/lessons', async (req, res) => {
   const { title } = req.body
+  
   const lesson = await prisma.lesson.create({
     data: { title },
   })
