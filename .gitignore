@@ -133,3 +133,6 @@ dist
 
 # cockroachdb
 cockroach-data
+
+# uploads
+uploads
