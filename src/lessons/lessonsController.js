@@ -1,50 +1,25 @@
-import fs from 'fs';
-import OpenAI from 'openai';
-import { PrismaClient } from '@prisma/client'
-
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
-const prisma = new PrismaClient()
+import {lessonsService, openAIService} from './lessonsService.js'
 
 class LessonsController {
-    async getLessons(req, res) {
-        const lessons = await prisma.lesson.findMany()
+    async getLessons(_, res) {
+        const lessons = await lessonsService.getLessons()
         res.json(lessons)
     }
 
     async getLesson(req, res) {
         const { id } = req.params
-        const lesson = await prisma.lesson.findUnique({
-            where: { id },
-        })
+        const lesson = await lessonsService.getLesson(id)
         res.json(lesson)
     }
     
     async createLesson(req, res) {
-
         const { title } = req.body
         const audioFile = req.file
-    
-        const transcription = await openai.audio.transcriptions.create({
-            file: fs.createReadStream(audioFile.path),
-            model: "whisper-1",
-        });
-    
-        const lesson = await prisma.lesson.create({
-            data: { title , transcription: transcription.text },
-        })
-    
-        const teachingFeedback = await openai.chat.completions.create({
-            messages: [
-                {"role": "system", "content": "Summarise this text."},
-                {"role": "user", "content": sampleTranscription}
-            ],
-            model: "gpt-4o-mini",
-        });
-    
-        console.log(teachingFeedback.choices[0])
-    
+        const lesson = lessonsService.addLesson({ title })
+        const transcription = await openAIService.getTranscription(audioFile)
+        await lessonsService.updateLesson(lesson.id, { transcription: transcription.text })
+        const teachingFeedback = await openAIService.getFeedback(transcription.text)
         res.json(lesson)
-
     }
 
     async deleteLesson(req, res) {
