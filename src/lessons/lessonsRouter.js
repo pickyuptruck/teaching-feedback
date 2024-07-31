@@ -1,21 +1,8 @@
 import { Router } from "express";
-import multer from 'multer';
 import { lessonsController } from "./lessonsController.js";
+import upload from "../config/multerConfig.js";
 
 export const lessonsRouter = Router();
-
-// multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname);
-    },
-  });
-
-const upload = multer({ storage: storage });
-
 
 lessonsRouter.get('/', lessonsController.getLessons);
   

@@ -13,11 +13,13 @@ class LessonsController {
     }
     
     async createLesson(req, res) {
+
         const { title } = req.body
         const audioFile = req.file
-        const lesson = lessonsService.addLesson({ title })
+        const lesson = await lessonsService.addLesson({ title })
         const transcription = await openAIService.getTranscription(audioFile)
         await lessonsService.updateLesson(lesson.id, { transcription: transcription.text })
+        console.log(lesson)
         const teachingFeedback = await openAIService.getFeedback(transcription.text)
         res.json(lesson)
     }
