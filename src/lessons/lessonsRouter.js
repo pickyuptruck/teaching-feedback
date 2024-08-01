@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { lessonsController } from "./lessonsController.js";
-import upload from "../config/multerConfig.js";
+import { upload } from "../config/multerConfig.js";
 
 export const lessonsRouter = Router();
 
