@@ -1,4 +1,5 @@
-import {lessonsService, openAIService} from './lessonsService.js'
+import { lessonsService } from './lessonsService.js'
+import { openAIService } from './openAIService.js'
 
 class LessonsController {
     async getLessons(_, res) {
