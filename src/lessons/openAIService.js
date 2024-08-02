@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai';
 import fs from 'fs';
+import { systemPrompt, sampleTranscription } from '../config/openAIConfig';
 
 class OpenAIService {
     constructor() {
@@ -16,7 +17,7 @@ class OpenAIService {
     getFeedback = async (transcription) => {
         return await this.openai.chat.completions.create({
             messages: [
-                {"role": "system", "content": "Summarise this text."},
+                {"role": "system", "content": systemPrompt},
                 {"role": "user", "content": transcription}
             ],
             model: "gpt-4o-mini",
